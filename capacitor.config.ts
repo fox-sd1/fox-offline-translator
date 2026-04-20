@@ -1,4 +1,4 @@
-import { CapacitorConfig } from '@capacitor/cli';
+hereimport { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.foxsd.offlintranslator',
@@ -6,7 +6,12 @@ const config: CapacitorConfig = {
   webDir: 'dist',
   bundledWebRuntime: false,
   server: {
-    androidScheme: 'https'
+    androidScheme: 'https',
+    allowNavigation: ['*'], // تسمح للمحرك بالاتصال بمصادر الـ WASM الخارجية عند الضرورة
+    cleartext: true // تضمن عدم حجب البيانات المحملة من الإنترنت في المرة الأولى
+  },
+  android: {
+    allowMixedContent: true, // ضرورية لعمل المكتبات الخارجية التي تعتمد على محركات ويب مختلفة
   }
 };
 
