@@ -1,5 +1,6 @@
 name: Build Android APK
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
 
 jobs:
   build:
@@ -20,8 +21,10 @@ jobs:
       - run: npm run build
       - run: npx cap add android
       - run: npx cap sync android
-            - run: echo "org.gradle.java.home=$JAVA_HOME" >> android/gradle.properties
-      - run: cd android && chmod +x gradlew && ./gradlew assembleDebug
+      - name: Build with Gradle
+        env:
+          JAVA_HOME: ${{ env.JAVA_HOME }}
+        run: cd android && chmod +x gradlew && ./gradlew assembleDebug
       
       - uses: actions/upload-artifact@v4
         with:
