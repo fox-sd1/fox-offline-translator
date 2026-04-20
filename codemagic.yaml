@@ -10,6 +10,7 @@ workflows:
       - rm -rf android
       - npx cap add android
       - npx cap copy
+      - echo "org.gradle.java.home=/usr/lib/jvm/java-17-openjdk-amd64" >> android/gradle.properties
       - cd android && ./gradlew assembleDebug
     artifacts:
       - android/app/build/outputs/**/*.apk
