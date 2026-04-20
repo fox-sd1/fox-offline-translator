@@ -9,7 +9,7 @@ jobs:
       - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with: 
-          node-version: 22 # تم التحديث هنا لحل مشكلة Capacitor
+          node-version: 22
           
       - name: Setup Java 21
         uses: actions/setup-java@v4
@@ -17,13 +17,16 @@ jobs:
           distribution: 'temurin' 
           java-version: '21'
       
-      - name: Build App
+      - name: Install and Build
         run: |
           npm install
           npm run build
-          # إضافة مكاتب كاباسيتور الأساسية لضمان وجودها
-          npm i @capacitor/core @capacitor/android
-          npx cap sync android || (npx cap add android && npx cap sync android)
+          # تثبيت كاباسيتور بشكل صريح
+          npm install @capacitor/cli @capacitor/core @capacitor/android
+          # مسح مجلد أندرويد إذا كان موجوداً لبنائه من جديد نظيفاً
+          rm -rf android
+          npx cap add android
+          npx cap sync android
           
       - name: Build Android APK
         run: |
@@ -34,5 +37,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: my-offline-translator
+          name: fox-translator-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
