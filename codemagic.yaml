@@ -1,0 +1,12 @@
+workflows:
+  android-release:
+    name: Android Build
+    scripts:
+      - npm install
+      - npm run build
+      - npx cap init "Fox Translator" com.fox.translator --web-dir=dist
+      - npx cap add android
+      - npx cap copy
+      - cd android && ./gradlew assembleDebug
+    artifacts:
+      - android/app/build/outputs/**/*.apk
