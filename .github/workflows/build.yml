@@ -15,6 +15,7 @@ jobs:
           node-version: 22
           
       - name: Setup Java 17
+        id: setup-java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
@@ -36,7 +37,7 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug -Dorg.gradle.java.home=$JAVA_HOME
+          ./gradlew assembleDebug -Dorg.gradle.java.home=${{ steps.setup-java.outputs.path }}
       
       - name: Upload APK
         uses: actions/upload-artifact@v4
