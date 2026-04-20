@@ -15,7 +15,6 @@ jobs:
           node-version: 22
           
       - name: Setup Java 17
-        id: setup-java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
@@ -33,12 +32,10 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
         
-      - name: Force Java 17 in Capacitor
+      - name: Force Java 17 in Gradle
         run: |
-          sed -i 's/JavaVersion.VERSION_21/JavaVersion.VERSION_17/g' android/capacitor-android/build.gradle
+          echo "org.gradle.java.home=$JAVA_HOME" >> android/gradle.properties
           sed -i 's/JavaVersion.VERSION_21/JavaVersion.VERSION_17/g' android/app/build.gradle
-          sed -i 's/sourceCompatibility JavaVersion.VERSION_21/sourceCompatibility JavaVersion.VERSION_17/g' android/capacitor-android/build.gradle
-          sed -i 's/targetCompatibility JavaVersion.VERSION_21/targetCompatibility JavaVersion.VERSION_17/g' android/capacitor-android/build.gradle
           sed -i 's/sourceCompatibility JavaVersion.VERSION_21/sourceCompatibility JavaVersion.VERSION_17/g' android/app/build.gradle
           sed -i 's/targetCompatibility JavaVersion.VERSION_21/targetCompatibility JavaVersion.VERSION_17/g' android/app/build.gradle
         
@@ -46,7 +43,7 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug -Dorg.gradle.java.home=${{ steps.setup-java.outputs.path }}
+          ./gradlew assembleDebug
       
       - name: Upload APK
         uses: actions/upload-artifact@v4
