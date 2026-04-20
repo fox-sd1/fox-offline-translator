@@ -8,6 +8,55 @@ import { offlineTranslate } from "@/lib/offline-translator";
 import { hasPack } from "@/lib/pack-storage";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useState } from "react";
+import { pipeline } from "@xenova/transformers";
+
+export const TextTranslator = () => {
+  const [text, setText] = useState("");
+  const [result, setResult] = useState("");
+  const [status, setStatus] = useState("");
+
+  const translateAction = async () => {
+    setStatus("جاري تحميل المحرك... (أول مرة فقط)");
+    try {
+      // استدعاء المترجم (سيستخدم الـ Cache أوفلاين بعد أول تحميل)
+      const translator = await pipeline('translation', 'Xenova/opus-mt-en-ar');
+      
+      setStatus("جاري الترجمة...");
+      const output = await translator(text, {
+        src_lang: 'eng_Latn',
+        tgt_lang: 'ara_Arab',
+      });
+      
+      setResult(output[0].translation_text);
+      setStatus("تمت الترجمة بنجاح");
+    } catch (err) {
+      setStatus("حدث خطأ، تأكد من تحميل الحزمة أولاً");
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-4">
+      <textarea 
+        className="w-full p-4 rounded-2xl bg-secondary/50 min-h-[150px]"
+        placeholder="Type English text here..."
+        onChange={(e) => setText(e.target.value)}
+      />
+      <button 
+        onClick={translateAction}
+        className="bg-gradient-fox text-white py-3 rounded-xl font-bold"
+      >
+        ترجم الآن
+      </button>
+      {status && <p className="text-[10px] text-center opacity-70">{status}</p>}
+      {result && (
+        <div className="p-4 rounded-2xl bg-card border border-fox/20 text-right font-medium">
+          {result}
+        </div>
+      )}
+    </div>
+  );
+};
 
 type Lang = "ar" | "en";
 
